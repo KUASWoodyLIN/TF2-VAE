@@ -35,7 +35,7 @@ test_data = test_data.prefetch(buffer_size=AUTOTUNE)
 # Callbacks function
 model_dir = log_dirs + '/models'
 os.makedirs(model_dir, exist_ok=True)
-model_tb = tf.python.keras.callbacks.TensorBoard(log_dir=log_dirs)
+model_tb = tf.keras.callbacks.TensorBoard(log_dir=log_dirs)
 model_mckp = tf.keras.callbacks.ModelCheckpoint(model_dir + '/best_model.h5',
                                                 monitor='val_loss',
                                                 save_best_only=True,
