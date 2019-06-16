@@ -17,7 +17,7 @@ class Encoder(keras.layers.Layer):
     """
         Maps MNIST digits to a triplet (z_mean, z_log_var, z).
         """
-    def __init__(self, latent_dim=16, name='encoder', **kwargs):
+    def __init__(self, latent_dim=2, name='encoder', **kwargs):
         super(Encoder, self).__init__(name=name, **kwargs)
         self.conv_1 = keras.layers.Conv2D(32, 3, padding='same', activation='relu')
         self.conv_2 = keras.layers.Conv2D(64, 3, strides=(2, 2), padding='same', activation='relu')

@@ -1,10 +1,10 @@
-import tensorflow.keras as keras
+import tensorflow as tf
 from layers import Encoder, Decoder
 
 
-class VariationalAutoEncoder(keras.Model):
+class VariationalAutoEncoder(tf.keras.Model):
     """Combines the encoder and decoder into an end-to-end model for training."""
-    def __init__(self, input_shape=(28, 28, 1), latent_dim=16, name='autoencoder', **kwargs):
+    def __init__(self, input_shape=(28, 28, 1), latent_dim=2, name='autoencoder', **kwargs):
         super(VariationalAutoEncoder, self).__init__(name=name, **kwargs)
         shape_before_flatten = (input_shape[0]//2, input_shape[1]//2, 1)
         self.encoder = Encoder(latent_dim=latent_dim)
@@ -18,3 +18,7 @@ class VariationalAutoEncoder(keras.Model):
         self.add_loss(kl_loss)
         return reconstructed
 
+
+if __name__ == '__main__':
+    model = VariationalAutoEncoder()
+    print()
