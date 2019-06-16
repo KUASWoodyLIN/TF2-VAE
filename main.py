@@ -27,7 +27,17 @@ train_data = train_data.map(parse_fn, num_parallel_calls=AUTOTUNE)
 train_data = train_data.batch(batch_size, drop_remainder=True)      # 如果最後一批資料小於batch_size，則捨棄該批資料
 train_data = train_data.prefetch(buffer_size=AUTOTUNE)
 
+# Callbacks function
+model_dir = log_dirs + '/models'
+os.makedirs(model_dir, exist_ok=True)
+model_tb = tf.keras.callbacks.TensorBoard(log_dir=log_dirs)
+model_mckp = tf.keras.callbacks.ModelCheckpoint(model_dir + '/best_{epoch:03d}.h5',
+                                                monitor='loss',  # TODO: mAP
+                                                save_best_only=True,
+                                                mode='min')
+
+# Create model
 vae = VariationalAutoEncoder()
 optimizer = tf.keras.optimizers.Adam(learning_rate=1e-3)
 vae.compile(optimizer, loss=MSELoss())
-vae.fit(train_data, epochs=50, batch_size=64)
+vae.fit(train_data, epochs=50, callbacks=[model_tb, model_mckp])
