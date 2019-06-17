@@ -6,7 +6,7 @@ from scipy.stats import norm
 
 class SaveDecoderOutput(tf.keras.callbacks.Callback):
     def __init__(self, image_size, log_dir):
-        super(TestDecoder, self).__init__()
+        super(SaveDecoderOutput, self).__init__()
         self.size = image_size
         self.log_dir = log_dir
         n = 15

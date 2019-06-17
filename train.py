@@ -4,7 +4,7 @@ import tensorflow_datasets as tfds
 from tensorflow import keras
 from utils.models import create_vae_model
 from utils.losses import MSELoss
-from utils.callbacks import SaveDecoderOutput, SaveDecoderWeights
+from utils.callbacks import SaveDecoderOutput, SaveDecoderModel
 os.environ["CUDA_VISIBLE_DEVICES"] = "0"
 
 
@@ -37,7 +37,7 @@ test_data = test_data.prefetch(buffer_size=AUTOTUNE)
 model_dir = log_dirs + '/models'
 os.makedirs(model_dir, exist_ok=True)
 model_tb = keras.callbacks.TensorBoard(log_dir=log_dirs)
-model_sdw = SaveDecoderWeights(model_dir + '/best_model.h5', monitor='val_loss')
+model_sdw = SaveDecoderModel(model_dir + '/best_model.h5', monitor='val_loss')
 model_testd = SaveDecoderOutput(28, log_dir=log_dirs)
 
 # create vae model
