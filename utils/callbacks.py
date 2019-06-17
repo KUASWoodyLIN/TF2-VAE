@@ -11,8 +11,9 @@ class SaveDecoderOutput(tf.keras.callbacks.Callback):
         self.log_dir = log_dir
         n = 15
         self.save_images = np.zeros((image_size * n, image_size * n, 1))
-        self.grid_x = norm.ppf(np.linspace(0.05, 0.95, n))
-        self.grid_y = norm.ppf(np.linspace(0.05, 0.95, n))
+        # linearly spaced coordinates corresponding to the 2D plot of digit classes in the latent space
+        self.grid_x = np.linspace(-1.5, 1.5, n)
+        self.grid_y = np.linspace(-1.5, 1.5, n)
 
     def on_train_begin(self, logs=None):
         path = os.path.join(self.log_dir, 'images')

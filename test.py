@@ -9,10 +9,9 @@ os.environ["CUDA_VISIBLE_DEVICES"] = "1"
 size = 28
 n = 15
 save_images = np.zeros((size * n, size * n, 1))
-# grid_x = norm.ppf(np.linspace(0.05, 0.95, n))
-# grid_y = norm.ppf(np.linspace(0.05, 0.95, n))
-grid_x = np.linspace(-4, 4, n)
-grid_y = np.linspace(-4, 4, n)
+# linearly spaced coordinates corresponding to the 2D plot of digit classes in the latent space
+grid_x = np.linspace(-1.5, 1.5, n)
+grid_y = np.linspace(-1.5, 1.5, n)
 model = tf.keras.models.load_model('logs_vae/models/best_model.h5')
 for i, yi in enumerate(grid_x):
     for j, xi in enumerate(grid_y):
@@ -22,3 +21,4 @@ for i, yi in enumerate(grid_x):
 
 plt.imshow(save_images[..., 0], cmap='gray')
 plt.show()
+plt.imsave('output.png', save_images[..., 0], cmap='gray')
