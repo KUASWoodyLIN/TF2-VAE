@@ -1,9 +1,10 @@
 import os
 import tensorflow as tf
 import tensorflow_datasets as tfds
-from models import VariationalAutoEncoder
-from losses import MSELoss
-from callbacks import TestDecoder
+from tensorflow import keras
+from utils.models import create_vae_model
+from utils.losses import MSELoss
+from utils.callbacks import SaveDecoderOutput, SaveDecoderWeights
 os.environ["CUDA_VISIBLE_DEVICES"] = "0"
 
 
@@ -16,12 +17,12 @@ def parse_fn(dataset, input_size=(28, 28)):
 
 dataset = 'mnist'     # 'cifar10', 'fashion_mnist', 'mnist'
 log_dirs = 'logs_vae'
-batch_size = 64
+batch_size = 16
 latent_dim = 2
+input_shape = (28, 28, 1)
 
 # Load datasets and setting
 AUTOTUNE = tf.data.experimental.AUTOTUNE  # 自動調整模式
-# train_data = tfds.load(dataset, split=combine_split, data_dir='/home/share/dataset/tensorflow-datasets')
 train_data = tfds.load(dataset, split=tfds.Split.TRAIN)
 train_data = train_data.shuffle(1000)
 train_data = train_data.map(parse_fn, num_parallel_calls=AUTOTUNE)
@@ -35,15 +36,14 @@ test_data = test_data.prefetch(buffer_size=AUTOTUNE)
 # Callbacks function
 model_dir = log_dirs + '/models'
 os.makedirs(model_dir, exist_ok=True)
-model_tb = tf.keras.callbacks.TensorBoard(log_dir=log_dirs)
-model_mckp = tf.keras.callbacks.ModelCheckpoint(model_dir + '/best_model.h5',
-                                                monitor='val_loss',
-                                                save_best_only=True,
-                                                mode='min')
-model_testd = TestDecoder(28, log_dir=log_dirs)
+model_tb = keras.callbacks.TensorBoard(log_dir=log_dirs)
+model_sdw = SaveDecoderWeights(model_dir + '/best_model.h5', monitor='val_loss')
+model_testd = SaveDecoderOutput(28, log_dir=log_dirs)
 
-# Create model
-vae = VariationalAutoEncoder(latent_dim=2)
-optimizer = tf.keras.optimizers.Adam(learning_rate=1e-3)
-vae.compile(optimizer, loss=MSELoss())
-vae.fit(train_data, epochs=50, validation_data=test_data, callbacks=[model_tb, model_mckp, model_testd])
+# create vae model
+vae_model = create_vae_model(input_shape, latent_dim)
+
+# training
+optimizer = tf.keras.optimizers.RMSprop()
+vae_model.compile(optimizer, loss=MSELoss())
+vae_model.fit(train_data, epochs=20, validation_data=test_data, callbacks=[model_tb, model_sdw, model_testd])
