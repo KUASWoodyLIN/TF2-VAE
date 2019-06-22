@@ -10,7 +10,7 @@ class Sampling(keras.layers.Layer):
         batch = tf.shape(z_mean)[0]
         dim = tf.shape(z_mean)[1]
         epsilon = tf.random.normal(shape=(batch, dim))
-        return z_mean + tf.exp(0.5 * z_log_var) * epsilon
+        return z_mean + tf.exp(z_log_var) * epsilon
 
 
 def create_vae_model(input_shape, latent_dim):
