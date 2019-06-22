@@ -1,6 +1,6 @@
 import numpy as np
 import tensorflow as tf
-import tensorflow.keras as keras
+from tensorflow import keras
 
 
 class Sampling(keras.layers.Layer):
@@ -10,7 +10,7 @@ class Sampling(keras.layers.Layer):
         batch = tf.shape(z_mean)[0]
         dim = tf.shape(z_mean)[1]
         epsilon = tf.random.normal(shape=(batch, dim))
-        return z_mean + tf.exp(0.5 * z_log_var) * epsilon
+        return z_mean + tf.exp(z_log_var) * epsilon
 
 
 def create_vae_model(input_shape, latent_dim):
@@ -43,6 +43,6 @@ def create_vae_model(input_shape, latent_dim):
     vae = keras.Model(inputs=img_inputs, outputs=img_outputs, name='vae')
 
     # add KL loss
-    kl_loss = -0.5 * tf.reduce_mean(z_log_var - tf.square(z_mean) - tf.exp(z_log_var) + 1)
+    kl_loss = -0.5 * tf.reduce_mean(1 + z_log_var - tf.square(z_mean) - tf.exp(z_log_var))
     vae.add_loss(kl_loss)
     return vae
