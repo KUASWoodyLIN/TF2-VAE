@@ -3,7 +3,7 @@ import tensorflow as tf
 import tensorflow_datasets as tfds
 from tensorflow import keras
 from utils.models import create_vae_model
-from utils.losses import MSELoss
+from utils.losses import reconstruction_loss
 from utils.callbacks import SaveDecoderOutput, SaveDecoderModel
 os.environ["CUDA_VISIBLE_DEVICES"] = "0"
 
@@ -21,14 +21,16 @@ batch_size = 16
 latent_dim = 2
 input_shape = (28, 28, 1)
 
-# Load datasets and setting
-AUTOTUNE = tf.data.experimental.AUTOTUNE  # 自動調整模式
+# Load datasets
 train_data = tfds.load(dataset, split=tfds.Split.TRAIN)
+test_data = tfds.load(dataset, split=tfds.Split.TEST)
+
+# Setting datasets
+AUTOTUNE = tf.data.experimental.AUTOTUNE  # 自動調整模式
 train_data = train_data.shuffle(1000)
 train_data = train_data.map(parse_fn, num_parallel_calls=AUTOTUNE)
 train_data = train_data.batch(batch_size)
 train_data = train_data.prefetch(buffer_size=AUTOTUNE)
-test_data = tfds.load(dataset, split=tfds.Split.TEST)
 test_data = test_data.map(parse_fn, num_parallel_calls=AUTOTUNE)
 test_data = test_data.batch(batch_size)
 test_data = test_data.prefetch(buffer_size=AUTOTUNE)
@@ -45,5 +47,5 @@ vae_model = create_vae_model(input_shape, latent_dim)
 
 # training
 optimizer = tf.keras.optimizers.RMSprop()
-vae_model.compile(optimizer, loss=MSELoss())
+vae_model.compile(optimizer, loss=reconstruction_loss)
 vae_model.fit(train_data, epochs=20, validation_data=test_data, callbacks=[model_tb, model_sdw, model_testd])

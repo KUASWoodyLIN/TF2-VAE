@@ -1,7 +1,6 @@
 import os
 import numpy as np
 import tensorflow as tf
-from scipy.stats import norm
 
 
 class SaveDecoderOutput(tf.keras.callbacks.Callback):
