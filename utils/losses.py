@@ -1,7 +1,7 @@
 import tensorflow as tf
 from tensorflow.python.keras.losses import LossFunctionWrapper
 
-
+tf.python.keras.layers.Conv2D
 class MSELoss(LossFunctionWrapper):
     def __init__(self, name='mse_loss'):
         super(MSELoss, self).__init__(mse_loss, name=name)

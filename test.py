@@ -1,6 +1,5 @@
 import numpy as np
 import tensorflow as tf
-from scipy.stats import norm
 import matplotlib.pyplot as plt
 import os
 os.environ["CUDA_VISIBLE_DEVICES"] = "1"
